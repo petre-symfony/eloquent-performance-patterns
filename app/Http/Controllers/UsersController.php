@@ -17,6 +17,7 @@ class UsersController extends Controller {
     public function index(): View {
         return view('users', [
             'users' => User::with('company')
+                ->orderBy('name')
                 ->simplePaginate()
         ]);
     }
