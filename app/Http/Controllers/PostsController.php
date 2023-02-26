@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class PostsController extends Controller {
     public function index() {
-        return 'Hello World';
-        
-        $years = Post::with('author')
+
+        $years = Post::select('id', 'title', 'slug', 'published_at', 'author_id')
+            ->with('author')
             ->latest('published_at')
             ->get()
             ->groupBy(fn($post) => $post->published_at->year);
