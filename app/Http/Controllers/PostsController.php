@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class PostsController extends Controller {
     public function index() {
+        return 'Hello World';
+        
         $years = Post::with('author')
             ->latest('published_at')
             ->get()
