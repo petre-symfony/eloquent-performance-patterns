@@ -12,13 +12,7 @@ class LoginsController extends Controller {
      */
     public function index(): View {
         return view('logins.index', [
-            'users' => User::addSelect([
-                    'last_login_at' => Login::select('created_at')
-                        ->whereColumn('user_id', 'users.id')
-                        ->latest()
-                        ->take(1)
-                ])
-                ->withCasts(['last_login_at' => 'datetime'])
+            'users' => User::withLastLoginAt()
                 ->orderBy('name')
                 ->paginate()
         ]);
