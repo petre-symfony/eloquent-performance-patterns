@@ -9,14 +9,11 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('logins', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('author_id')->constrained('users');
-            $table->string('title');
-            $table->string('slug');
-            $table->longText('body');
-            $table->dateTime('published_at');
-            $table->timestampsTz();
+            $table->foreignId('user_id')->constrained();
+            $table->string('ip_address', 50);
+            $table->timestamps();
         });
     }
 
@@ -24,6 +21,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('logins');
     }
 };
