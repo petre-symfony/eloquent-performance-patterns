@@ -11,7 +11,8 @@ class LoginsController extends Controller {
      */
     public function index(): View {
         return view('logins.index', [
-            'users' => User::orderBy('name')
+            'users' => User::with('logins')
+                ->orderBy('name')
                 ->paginate()
         ]);
     }
