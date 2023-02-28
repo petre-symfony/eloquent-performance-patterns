@@ -13,6 +13,7 @@ class LoginsController extends Controller {
     public function index(): View {
         return view('logins.index', [
             'users' => User::withLastLoginAt()
+                ->withLastLoginIpAddress()
                 ->orderBy('name')
                 ->paginate()
         ]);
