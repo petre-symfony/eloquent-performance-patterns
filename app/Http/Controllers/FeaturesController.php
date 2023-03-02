@@ -14,6 +14,15 @@ class FeaturesController extends Controller {
             ->selectRaw("count(case when status = 'Planned' then 1 end) as planned")
             ->selectRaw("count(case when status = 'Completed' then 1 end) as completed")
             ->first();
+        /**
+         * You can use filter when postgress database are used
+         *
+        $statuses = Feature::toBase()
+            ->selectRaw("count(*) filter (where status = 'Requested') as requested")
+            ->selectRaw("count(*) filter (where status = 'Planned') as planned")
+            ->selectRaw("count(*) filter (where status = 'Completed') as completed")
+            ->first();
+         */
 
         $features = Feature::withCount('comments')
             ->paginate();
