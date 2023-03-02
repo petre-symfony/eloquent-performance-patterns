@@ -9,10 +9,11 @@ use Illuminate\Http\Request;
 class FeaturesController extends Controller {
     public function index() {
 
-        $statuses = (object) [];
-        $statuses->requested = Feature::where('status', 'Requested')->count();
-        $statuses->planned = Feature::where('status', 'Planned')->count();
-        $statuses->completed = Feature::where('status', 'Completed')->count();
+        $statuses = Feature::toBase()
+            ->selectRaw("count(case when status = 'Requested' then 1 end) as requested")
+            ->selectRaw("count(case when status = 'Planned' then 1 end) as planned")
+            ->selectRaw("count(case when status = 'Completed' then 1 end) as completed")
+            ->first();
 
         $features = Feature::withCount('comments')
             ->paginate();
