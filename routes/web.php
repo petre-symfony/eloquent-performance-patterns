@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [FeaturesController::class, 'index']);
+Route::get('/features/{feature}', [FeaturesController::class, 'show']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

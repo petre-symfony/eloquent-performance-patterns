@@ -21,4 +21,12 @@ class CommentFactory extends Factory {
             'updated_at' => $date,
         ];
     }
+
+    public function existing() {
+        return $this->state(function (array $attributes) {
+            return [
+                'user_id' => $this->faker->numberBetween(1, 20)
+            ];
+        });
+    }
 }
