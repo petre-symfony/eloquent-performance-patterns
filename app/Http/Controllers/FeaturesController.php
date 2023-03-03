@@ -46,7 +46,8 @@ class FeaturesController extends Controller {
     }
 
     public function show(Feature $feature){
-        $feature->load('comments.user', 'comments.feature.comments');
+        $feature->load('comments.user');
+        $feature->comments->each->setRelation('feature', $feature);
 
         return view('features.show', ['feature' => $feature]);
     }
