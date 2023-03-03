@@ -46,7 +46,7 @@ class FeaturesController extends Controller {
     }
 
     public function show(Feature $feature){
-        $feature->load('comments.user');
+        $feature->load('comments.user', 'comments.feature.comments');
 
         return view('features.show', ['feature' => $feature]);
     }
