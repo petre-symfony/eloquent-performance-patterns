@@ -15,4 +15,8 @@ class Comment extends Model {
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function isAuthor(){
+        return $this->user_id === $this->feature->comments->first()->user_id;
+    }
 }
