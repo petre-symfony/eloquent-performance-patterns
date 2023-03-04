@@ -17,6 +17,7 @@ class UsersController extends Controller {
     public function index(): View {
         return view('users.index', [
             'users' => User::with('company')
+                ->search(request('search'))
                 //->orderBy('name') Ep2
                 ->paginate()
         ]);

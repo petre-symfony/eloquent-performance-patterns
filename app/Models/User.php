@@ -65,4 +65,12 @@ class User extends Authenticatable {
                 ->take(1)
         ])->with('lastLogin');
     }
+
+    public function scopeSearch($query, string $terms = null){
+        collect(explode(' ', $terms))->filter()->each(function ($term) use ($query) {
+            $term = '%'.$term.'%';
+            $query->where('first_name', 'like', $term)
+                ->orWhere('last_name', 'like', $term);
+        });
+    }
 }
