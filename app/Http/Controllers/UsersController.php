@@ -15,10 +15,10 @@ class UsersController extends Controller {
      * Display the user's profile form.
      */
     public function index(): View {
-        return view('users', [
+        return view('users.index', [
             'users' => User::with('company')
-                ->orderBy('name')
-                ->simplePaginate()
+                //->orderBy('name') Ep2
+                ->paginate()
         ]);
     }
 }

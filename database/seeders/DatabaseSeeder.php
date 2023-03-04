@@ -47,6 +47,9 @@ class DatabaseSeeder extends Seeder {
      * }
      */
 
+    /**
+     * run for Ep 6 and 6
+
     public function run() {
         $this->getUsers();
 
@@ -89,5 +92,34 @@ class DatabaseSeeder extends Seeder {
                 'company_id' => $company->id
             ]);
         }
+    }
+     */
+    public function run(){
+        Company::factory(10000)->create()
+            ->each(
+                fn ($company) => User::factory(10)->create([
+                    'company_id' => $company->id
+                ])
+            );
+
+        $user = User::find(10000);
+        $user->update([
+            'first_name' => 'Bill',
+            'last_name' => 'Gates',
+            'email' => 'bill.gates@microsoft.com',
+        ]);
+        $user->company->update([
+            'name' => 'Microsoft Corporation',
+        ]);
+
+        $user = User::find(20000);
+        $user->update([
+            'first_name' => 'Tim',
+            'last_name' => 'O\'Reilly',
+            'email' => 'tim@oreilly.com',
+        ]);
+        $user->company->update([
+            'name' => 'O\'Reilly Media Inc.',
+        ]);
     }
 }
