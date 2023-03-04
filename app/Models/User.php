@@ -71,7 +71,10 @@ class User extends Authenticatable {
             $term = '%'.$term.'%';
             $query->where(function ($query) use ($term) {
                 $query->where('first_name', 'like', $term)
-                    ->orWhere('last_name', 'like', $term);
+                    ->orWhere('last_name', 'like', $term)
+                    ->orWhereHas('company', function ($query) use ($term) {
+                        $query->where('name', 'like', $term);
+                    });
             });
         });
     }
