@@ -68,27 +68,25 @@ class User extends Authenticatable {
 
     public function scopeSearch($query, string $terms = null){
         if (config('database.default') === 'mysql' || config('database.default') === 'sqlite') {
+            $query->join('companies', 'companies.id', '=', 'users.company_id');
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
                 $term = $term . '%';
                 $query->where(function ($query) use ($term) {
                     $query->where('first_name', 'like', $term)
                         ->orWhere('last_name', 'like', $term)
-                        ->orWhereHas('company', function ($query) use ($term) {
-                            $query->where('name', 'like', $term);
-                        });
+                        ->orWhere('companies.name', 'like', $term);
                 });
             });
         }
 
         if (config('database.default') === 'pgsql') {
+            $query->join('companies', 'companies.id', '=', 'users.company_id');
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
                 $term = $term.'%';
                 $query->where(function ($query) use ($term) {
                     $query->where('first_name', 'ilike', $term)
                         ->orWhere('last_name', 'ilike', $term)
-                        ->orWhereHas('company', function ($query) use ($term) {
-                            $query->where('name', 'ilike', $term);
-                        });
+                        ->orWhere('companies.name', 'ilike', $term);
                 });
             });
         }
