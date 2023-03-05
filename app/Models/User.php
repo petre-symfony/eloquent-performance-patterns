@@ -73,11 +73,10 @@ class User extends Authenticatable {
                 $query->where(function ($query) use ($term) {
                     $query->where('first_name', 'like', $term)
                         ->orWhere('last_name', 'like', $term)
-                        ->orWhereIn('company_id', function ($query) use ($term) {
-                            $query->select('id')
-                                ->from('companies')
-                                ->where('name', 'like', $term);
-                        });
+                        ->orWhereIn('company_id',
+                            Company::where('name', 'like', $term)
+                                ->pluck('id')
+                        );
                 });
             });
         }
@@ -88,11 +87,10 @@ class User extends Authenticatable {
                 $query->where(function ($query) use ($term) {
                     $query->where('first_name', 'ilike', $term)
                         ->orWhere('last_name', 'ilike', $term)
-                        ->orWhereIn('company_id', function ($query) use ($term) {
-                            $query->select('id')
-                                ->from('companies')
-                                ->where('name', 'ilike', $term);
-                        });
+                        ->orWhereIn('company_id',
+                            Company::where('name', 'ilike', $term)
+                                ->pluck('id')
+                        );
                 });
             });
         }
