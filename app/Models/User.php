@@ -70,13 +70,25 @@ class User extends Authenticatable {
         if (config('database.default') === 'mysql' || config('database.default') === 'sqlite') {
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
                 $term = $term . '%';
-                $query->where(function ($query) use ($term) {
-                    $query->where('first_name', 'like', $term)
-                        ->orWhere('last_name', 'like', $term)
-                        ->orWhereIn('company_id',
-                            Company::where('name', 'like', $term)
-                                ->pluck('id')
-                        );
+                $query->whereIn('id', function ($query) use ($term) {
+                    // derived table
+                    $query->select('id')
+                        ->from(function($query) use ($term) {
+                            // find users by first and last name
+                            $query->select('id')
+                                ->from('users')
+                                ->where('first_name', 'like', $term)
+                                ->orWhere('last_name', 'like', $term)
+                                //union
+                                ->union(
+                                    $query->newQuery()
+                                        // find users by company name
+                                        ->select('users.id')
+                                        ->from('users')
+                                        ->join('companies', 'companies.id', '=', 'users.company_id')
+                                        ->where('companies.name', 'like', $term)
+                                );
+                        }, 'matches');
                 });
             });
         }
@@ -84,13 +96,25 @@ class User extends Authenticatable {
         if (config('database.default') === 'pgsql') {
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
                 $term = $term.'%';
-                $query->where(function ($query) use ($term) {
-                    $query->where('first_name', 'ilike', $term)
-                        ->orWhere('last_name', 'ilike', $term)
-                        ->orWhereIn('company_id',
-                            Company::where('name', 'ilike', $term)
-                                ->pluck('id')
-                        );
+                $query->whereIn('id', function ($query) use ($term) {
+                    // derived table
+                    $query->select('id')
+                        ->from(function($query) use ($term) {
+                            // find users by first and last name
+                            $query->select('id')
+                                ->from('users')
+                                ->where('first_name', 'ilike', $term)
+                                ->orWhere('last_name', 'ilike', $term)
+                                //union
+                                ->union(
+                                    $query->newQuery()
+                                        // find users by company name
+                                        ->select('users.id')
+                                        ->from('users')
+                                        ->join('companies', 'companies.id', '=', 'users.company_id')
+                                        ->where('companies.name', 'ilike', $term)
+                                );
+                        }, 'matches');
                 });
             });
         }
