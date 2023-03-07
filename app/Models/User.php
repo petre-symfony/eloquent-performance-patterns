@@ -69,7 +69,7 @@ class User extends Authenticatable {
     public function scopeSearch($query, string $terms = null){
         if (config('database.default') === 'mysql' || config('database.default') === 'sqlite') {
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
-                $term = $term . '%';
+                $term = preg_replace('/[^A-Za-z0-9]/', '', $term).'%';;
                 $query->whereIn('id', function ($query) use ($term) {
                     // derived table
                     $query->select('id')
@@ -77,8 +77,8 @@ class User extends Authenticatable {
                             // find users by first and last name
                             $query->select('id')
                                 ->from('users')
-                                ->where('first_name', 'like', $term)
-                                ->orWhere('last_name', 'like', $term)
+                                ->whereRaw("regexp_replace(first_name, '[^A-Za-z0-9]', '') like ?", [$term])
+                                ->orWhereRaw("regexp_replace(last_name, '[^A-Za-z0-9]', '') like ?", [$term])
                                 //union
                                 ->union(
                                     $query->newQuery()
@@ -86,7 +86,7 @@ class User extends Authenticatable {
                                         ->select('users.id')
                                         ->from('users')
                                         ->join('companies', 'companies.id', '=', 'users.company_id')
-                                        ->where('companies.name', 'like', $term)
+                                        ->whereRaw("regexp_replace(companies.name, '[^A-Za-z0-9]', '') like ?", [$term])
                                 );
                         }, 'matches');
                 });
@@ -95,7 +95,7 @@ class User extends Authenticatable {
 
         if (config('database.default') === 'pgsql') {
             collect(str_getcsv($terms, ' ', '"'))->filter()->each(function ($term) use ($query) {
-                $term = $term.'%';
+                $term = preg_replace('/[^A-Za-z0-9]/', '', $term).'%';
                 $query->whereIn('id', function ($query) use ($term) {
                     // derived table
                     $query->select('id')
@@ -103,8 +103,8 @@ class User extends Authenticatable {
                             // find users by first and last name
                             $query->select('id')
                                 ->from('users')
-                                ->where('first_name', 'ilike', $term)
-                                ->orWhere('last_name', 'ilike', $term)
+                                ->whereRaw("regexp_replace(first_name, '[^A-Za-z0-9]', '') ilike ?", [$term])
+                                ->orWhereRaw("regexp_replace(last_name, '[^A-Za-z0-9]', '') ilike ?", [$term])
                                 //union
                                 ->union(
                                     $query->newQuery()
@@ -112,7 +112,7 @@ class User extends Authenticatable {
                                         ->select('users.id')
                                         ->from('users')
                                         ->join('companies', 'companies.id', '=', 'users.company_id')
-                                        ->where('companies.name', 'ilike', $term)
+                                        ->whereRaw("regexp_replace(companies.name, '[^A-Za-z0-9]', '') ilike ?", [$term])
                                 );
                         }, 'matches');
                 });
