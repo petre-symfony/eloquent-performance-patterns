@@ -13,7 +13,9 @@ return new class extends Migration {
             $table->id();
             //$table->string('name');
             $table->string('first_name')->index();
+            $table->string('first_name_normalized')->virtualAs("regexp_replace('first_name', '[^A-Za-z0-9]', '')")->index();
             $table->string('last_name')->index();
+            $table->string('last_name_normalized')->virtualAs("regexp_replace('last_name', '[^A-Za-z0-9]', '')")->index();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

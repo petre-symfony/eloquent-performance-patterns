@@ -77,8 +77,8 @@ class User extends Authenticatable {
                             // find users by first and last name
                             $query->select('id')
                                 ->from('users')
-                                ->whereRaw("regexp_replace(first_name, '[^A-Za-z0-9]', '') like ?", [$term])
-                                ->orWhereRaw("regexp_replace(last_name, '[^A-Za-z0-9]', '') like ?", [$term])
+                                ->where('first_name_normalized', 'like', $term)
+                                ->orWhere('last_name_normalized', 'like', $term)
                                 //union
                                 ->union(
                                     $query->newQuery()
@@ -86,7 +86,7 @@ class User extends Authenticatable {
                                         ->select('users.id')
                                         ->from('users')
                                         ->join('companies', 'companies.id', '=', 'users.company_id')
-                                        ->whereRaw("regexp_replace(companies.name, '[^A-Za-z0-9]', '') like ?", [$term])
+                                        ->where('companies.name_normalized', 'like', $term)
                                 );
                         }, 'matches');
                 });
@@ -103,8 +103,8 @@ class User extends Authenticatable {
                             // find users by first and last name
                             $query->select('id')
                                 ->from('users')
-                                ->whereRaw("regexp_replace(first_name, '[^A-Za-z0-9]', '') ilike ?", [$term])
-                                ->orWhereRaw("regexp_replace(last_name, '[^A-Za-z0-9]', '') ilike ?", [$term])
+                                ->where('first_name_normalized', 'ilike', $term)
+                                ->orWhere('last_name_normalized', 'ilike', $term)
                                 //union
                                 ->union(
                                     $query->newQuery()
@@ -112,7 +112,7 @@ class User extends Authenticatable {
                                         ->select('users.id')
                                         ->from('users')
                                         ->join('companies', 'companies.id', '=', 'users.company_id')
-                                        ->whereRaw("regexp_replace(companies.name, '[^A-Za-z0-9]', '') ilike ?", [$term])
+                                        ->where('companies.name_normalized', 'ilike', $term)
                                 );
                         }, 'matches');
                 });
